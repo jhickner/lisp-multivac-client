@@ -56,7 +56,6 @@
     (format t "~%")))
 
 (defun output-tag-count (items)
-  ; (format t "~S~%" items)
   (let ((tags (decode-json-from-string items)))
     (dolist (tag tags)
       (format t "~a~a~a: ~a~%"
@@ -104,11 +103,6 @@
 ; ARG PROCESSING
 ;***********************
 
-(defun print-args (args opts)
-  (progn 
-        (format t "Args: ~S~%" args)
-        (format t "Opts: ~S~%" opts)))
-
 (defun handle-args (args opts)
   (let ((cmd (car args))
         (del-id (aget "delete" opts :test #'string=))
@@ -117,7 +111,7 @@
       ((equal cmd "add")
        (format t "result: ~S~%" 
               (add-item (parse-tags (cadr args)) 
-                        (apply #'str (cddr args)) 
+                        (join " " (cddr args)) 
                         link)))
       ((equal cmd "tags")
        (get-tag-count))
@@ -137,5 +131,4 @@
     (multiple-value-bind (a b)
       (getopt args '(("delete" :optional)
                      ("link" :optional)))
-      ; (print-args a b)
       (handle-args a b))))
