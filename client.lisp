@@ -92,7 +92,7 @@
                     (:body . ,body)))
          (payload (if link (cons `(:link . ,link) payload)
                     payload)))
-    (server-request "item/"
+    (server-request "item"
                     :method :post
                     :additional-headers '(("Content-Type" . "application/json"))
                     :content (encode-json-to-string payload))))
