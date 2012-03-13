@@ -15,7 +15,7 @@
 
 
 ;"http://209.114.34.65:4567/"
-(defvars *host* "http://localhost:4545/api/"
+(defvars *host* "http://209.114.34.65:4545/api/"
          *username* "653638dc733afce75130303fe6e6010f63768af0"
          *password* "X") 
 
@@ -55,6 +55,15 @@
               (format t "~alink:~a ~a~%" c-on c-off link))
     (format t "~%")))
 
+(defun output-tag-count (items)
+  ; (format t "~S~%" items)
+  (let ((tags (decode-json-from-string items)))
+    (dolist (tag tags)
+      (format t "~a~a~a: ~a~%"
+              c-on
+              (aget :--id tag)
+              c-off
+              (values (round (aget :value tag)))))))
 
 ;***********************
 ; SERVER OPS
@@ -88,6 +97,8 @@
                     :additional-headers '(("Content-Type" . "application/json"))
                     :content (encode-json-to-string payload))))
 
+(defun get-tag-count ()
+  (output-tag-count (server-request "tag-count")))
 
 ;***********************
 ; ARG PROCESSING
@@ -102,14 +113,17 @@
   (let ((cmd (car args))
         (del-id (aget "delete" opts :test #'string=))
         (link (aget "link" opts :test #'string=)))
-    (if (equal cmd "add")
-      (format t "result: ~S~%" 
+    (cond 
+      ((equal cmd "add")
+       (format t "result: ~S~%" 
               (add-item (parse-tags (cadr args)) 
                         (apply #'str (cddr args)) 
-                        link))
-      (if del-id
-        (format t "result: ~S~%" (delete-item del-id))
-        (search-items args)))))
+                        link)))
+      ((equal cmd "tags")
+       (get-tag-count))
+      (T (if del-id
+           (format t "result: ~S~%" (delete-item del-id))
+           (search-items args))))))
 
 
 ;***********************
