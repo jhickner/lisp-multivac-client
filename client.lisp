@@ -15,9 +15,8 @@
 
 
 ;"http://209.114.34.65:4567/"
-(defvars *host* "http://209.114.34.65:4545/api/"
-         *username* "653638dc733afce75130303fe6e6010f63768af0"
-         *password* "X") 
+(defvar *host* "http://209.114.34.65:4545/api/") 
+(defparameter *api-key* nil)
 
 (defvars c-on   (format nil "~C[36m" #\Esc) 
          c-on-b (format nil "~C[36;1m" #\Esc) 
@@ -28,6 +27,11 @@
 ;***********************
 ; HELPERS
 ;***********************
+
+(defun read-key ()
+  (let ((path (merge-pathnames #p".multivac" (user-homedir-pathname))))
+    (defparameter *api-key* 
+      (regex-replace-all "\\s" (file-string path) ""))))
 
 ; 2011-08-07T17:18:27.682Z
 (defun fix-date (d)
@@ -72,7 +76,8 @@
   `(values 
      (funcall #'http-request 
             (str ,*host* ,path)
-            :basic-authorization '(,*username* ,*password*) 
+            ; making sure *api-key* is accessed at run time
+            :basic-authorization ((lambda () `(,*api-key* "X"))) 
             ,@params)))
 
 (defun search-items (tags)
@@ -124,6 +129,7 @@
 ; MAIN
 ;***********************
 (defun main ()
+  (read-key)
   (let ((args (or
                 #+ccl (subseq ccl:*command-line-argument-list* 2)
                 #+sbcl (rest sb-ext:*posix-argv*)
