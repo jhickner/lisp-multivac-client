@@ -1,17 +1,18 @@
 (load "lisp_extensions.lisp")
 
-(require :drakma)
-(require :cl-json)
-(require :net-telent-date)
-(require :getopt)
+(ql:quickload '("drakma" 
+                "cl-json" 
+                "net-telent-date" 
+                "cl-ppcre"
+                "getopt"))
 
 (defpackage :multivac-client
   (:use :cl :jwh :drakma :json :net.telent.date :cl-ppcre :getopt)
   (:export :main))
 (in-package :multivac-client)
 
-(defparameter *api-url* nil)
-(defparameter *api-key* nil)
+(defparams *api-url* nil
+           *api-key* nil)
 
 (defvars c-on   (format nil "~C[36m" #\Esc) 
          c-on-b (format nil "~C[36;1m" #\Esc) 
@@ -26,8 +27,8 @@
 (defun read-config ()
   (let* ((path (merge-pathnames #p".multivac" (user-homedir-pathname)))
          (json (decode-json-from-source path)))
-    (defparameter *api-url* (aget :api-url json))
-    (defparameter *api-key* (aget :api-key json))))
+    (defparams *api-url* (aget :api-url json)
+               *api-key* (aget :api-key json))))
 
 ; 2011-08-07T17:18:27.682Z
 (defun fix-date (d)
@@ -67,7 +68,7 @@
 (defun output-help ()
   (format t "Usage: multivac~%")
   (format t "                [<tag> <tag> <tag>...] - search by tag~%")
-  (format t "                [add <tag,tag...> <body>] - add a new item~%")
+  (format t "                [add <tag,tag...> <body> [-l link]] - add a new item~%")
   (format t "                [tags] - list your top 20 tags~%")
   (format t "                [-d <item-id>] - delete an item~%")
   (quit))
@@ -135,7 +136,7 @@
 ;***********************
 (defun main ()
   (read-config)
-  (let ((cmd-line-args (get-cmd-line-args)))
+  (let ((cmd-line-args (get-args)))
     (multiple-value-bind (args opts)
       (getopt cmd-line-args '(("delete" :optional)
                               ("link" :optional)))

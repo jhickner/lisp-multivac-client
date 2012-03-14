@@ -1,7 +1,7 @@
 (defpackage :jwh
   (:export #:defvars
-           #:requires
-           #:get-cmd-line-args
+           #:defparams
+           #:get-args
            #:quit
            #:file-string
            #:aget
@@ -36,12 +36,12 @@
         (loop while args
               collect (list 'defvar (pop args) (pop args)))))
 
-(defmacro requires (&rest args)
-  (cons 'progn
+(defmacro defparams (&rest args)
+  (cons 'progn 
         (loop while args
-              collect (list 'require (pop args)))))
+              collect (list 'defparameter (pop args) (pop args)))))
 
-(defun get-cmd-line-args ()
+(defun get-args ()
   (or
     #+ccl (subseq ccl:*command-line-argument-list* 2)
     #+sbcl (rest sb-ext:*posix-argv*)
