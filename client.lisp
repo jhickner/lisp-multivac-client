@@ -135,9 +135,10 @@
 ; MAIN
 ;***********************
 (defun main ()
-  (read-config)
-  (let ((cmd-line-args (get-args)))
-    (multiple-value-bind (args opts)
-      (getopt cmd-line-args '(("delete" :optional)
-                              ("link" :optional)))
-      (handle-args args opts))))
+  (catch-errors
+    (read-config) 
+    (let ((cmd-line-args (get-args)))
+      (multiple-value-bind (args opts)
+        (getopt cmd-line-args '(("delete" :optional)
+                                ("link" :optional)))
+        (handle-args args opts)))))

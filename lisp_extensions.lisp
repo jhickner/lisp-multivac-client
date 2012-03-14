@@ -3,6 +3,7 @@
            #:defparams
            #:get-args
            #:quit
+           #:catch-errors
            #:file-string
            #:aget
            #:flatten
@@ -50,6 +51,12 @@
 (defun quit () 
   #+:ccl (ccl:quit)
   #+:sbcl (sb-ext:quit))
+
+(defmacro catch-errors (&body body)
+  `(handler-case
+     (progn
+       ,@body)
+     (error (e) (format t "Error: ~S~%" e))))
 
 ;**********************
 ; FILES
