@@ -1,7 +1,4 @@
-; (proclaim '(optimize (speed 3) (space 0) (debug 0)))
-
-; ccl -l "client.lisp" -e "(save \"ccl\" #'multivac-client:main)"
-; sbcl --load "client.lisp" --eval "(save \"sbcl\" #'multivac-client:main)"
+(load "lisp_extensions.lisp")
 
 (require :drakma)
 (require :cl-json)
@@ -13,9 +10,7 @@
   (:export :main))
 (in-package :multivac-client)
 
-
-;"http://209.114.34.65:4567/"
-(defvar *host* "http://209.114.34.65:4545/api/") 
+(defparameter *api-url* nil)
 (defparameter *api-key* nil)
 
 (defvars c-on   (format nil "~C[36m" #\Esc) 
@@ -28,10 +23,11 @@
 ; HELPERS
 ;***********************
 
-(defun read-key ()
-  (let ((path (merge-pathnames #p".multivac" (user-homedir-pathname))))
-    (defparameter *api-key* 
-      (regex-replace-all "\\s" (file-string path) ""))))
+(defun read-config ()
+  (let* ((path (merge-pathnames #p".multivac" (user-homedir-pathname)))
+         (json (decode-json-from-source path)))
+    (defparameter *api-url* (aget :api-url json))
+    (defparameter *api-key* (aget :api-key json))))
 
 ; 2011-08-07T17:18:27.682Z
 (defun fix-date (d)
@@ -68,6 +64,14 @@
               c-off
               (values (round (aget :value tag)))))))
 
+(defun output-help ()
+  (format t "Usage: multivac~%")
+  (format t "                [<tag> <tag> <tag>...] - search by tag~%")
+  (format t "                [add <tag,tag...> <body>] - add a new item~%")
+  (format t "                [tags] - list your top 20 tags~%")
+  (format t "                [-d <item-id>] - delete an item~%")
+  (quit))
+
 ;***********************
 ; SERVER OPS
 ;***********************
@@ -75,10 +79,9 @@
 (defmacro server-request (path &rest params)
   `(values 
      (funcall #'http-request 
-            (str ,*host* ,path)
-            ; making sure *api-key* is accessed at run time
-            :basic-authorization ((lambda () `(,*api-key* "X"))) 
-            ,@params)))
+              (str *api-url* ,path)
+              :basic-authorization (cons *api-key* '("X")) 
+              ,@params)))
 
 (defun search-items (tags)
   (if tags
@@ -113,6 +116,8 @@
         (del-id (aget "delete" opts :test #'string=))
         (link (aget "link" opts :test #'string=)))
     (cond 
+      ((and (null args) (null opts))
+       (output-help))
       ((equal cmd "add")
        (format t "result: ~S~%" 
               (add-item (parse-tags (cadr args)) 
@@ -129,12 +134,9 @@
 ; MAIN
 ;***********************
 (defun main ()
-  (read-key)
-  (let ((args (or
-                #+ccl (subseq ccl:*command-line-argument-list* 2)
-                #+sbcl (rest sb-ext:*posix-argv*)
-      nil)))
-    (multiple-value-bind (a b)
-      (getopt args '(("delete" :optional)
-                     ("link" :optional)))
-      (handle-args a b))))
+  (read-config)
+  (let ((cmd-line-args (get-cmd-line-args)))
+    (multiple-value-bind (args opts)
+      (getopt cmd-line-args '(("delete" :optional)
+                              ("link" :optional)))
+      (handle-args args opts))))
