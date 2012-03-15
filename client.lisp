@@ -34,7 +34,7 @@
 (defun fix-date (d)
   (universal-time-to-rfc2822-date 
     (parse-time 
-      (values (regex-replace-all "T|\\.\\d{3}Z" d " "))) 
+      (regex-replace-all "T|\\.\\d{3}Z" d " ")) 
     0))
 
 (defun parse-tags (tags)
@@ -63,12 +63,13 @@
               c-on
               (aget :--id tag)
               c-off
-              (values (round (aget :value tag)))))))
+              (round (aget :value tag))))))
 
 (defun output-help ()
   (format t "Usage: multivac~%")
   (format t "                [<tag> <tag> <tag>...] - search by tag~%")
-  (format t "                [add <tag,tag...> <body> [-l link]] - add a new item~%")
+  (format t "                [add <tag,tag...> <body> [-l link]] ~
+                             - add a new item~%")
   (format t "                [tags] - list your top 20 tags~%")
   (format t "                [-d <item-id>] - delete an item~%")
   (quit))
@@ -78,11 +79,10 @@
 ;***********************
 
 (defmacro server-request (path &rest params)
-  `(values 
-     (funcall #'http-request 
-              (str *api-url* ,path)
-              :basic-authorization (cons *api-key* '("X")) 
-              ,@params)))
+  `(funcall #'http-request 
+            (str *api-url* ,path)
+            :basic-authorization (cons *api-key* '("X")) 
+            ,@params))
 
 (defun search-items (tags)
   (if tags
