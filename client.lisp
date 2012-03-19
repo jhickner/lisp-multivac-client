@@ -1,10 +1,6 @@
 (load "lisp_extensions.lisp")
 
-(ql:quickload '("drakma" 
-                "cl-json" 
-                "net-telent-date" 
-                "cl-ppcre"
-                "getopt"))
+(ql:quickload '("drakma" "cl-json" "net-telent-date" "cl-ppcre" "getopt"))
 
 (defpackage :multivac-client
   (:use :cl :jwh :drakma :json :net.telent.date :cl-ppcre :getopt)
@@ -67,11 +63,11 @@
 
 (defun output-help ()
   (format t "Usage: multivac~%")
-  (format t "                [<tag> <tag> <tag>...] - search by tag~%")
-  (format t "                [add <tag,tag...> <body> [-l link]] ~
-                             - add a new item~%")
-  (format t "                [tags] - list your top 20 tags~%")
-  (format t "                [-d <item-id>] - delete an item~%")
+  (format t "~16T[<tag> <tag> <tag>...] - search by tag~%")
+  (format t "~16T[add <tag,tag...> <body> [-l link]] - add a new item~%")
+  (format t "~16T[tags] - list your top 20 tags~%")
+  (format t "~16T[dump] - dump a json stream of all items to stdout~%")
+  (format t "~16T[-d <item-id>] - delete an item~%")
   (quit))
 
 ;***********************
@@ -108,6 +104,9 @@
 (defun get-tag-count ()
   (output-tag-count (server-request "tag-count")))
 
+(defun dump-json ()
+  (princ (server-request "search/")))
+
 ;***********************
 ; ARG PROCESSING
 ;***********************
@@ -119,6 +118,8 @@
     (cond 
       ((and (null args) (null opts))
        (output-help))
+      ((equal cmd "dump")
+       (dump-json))
       ((equal cmd "add")
        (format t "result: ~S~%" 
               (add-item (parse-tags (cadr args)) 

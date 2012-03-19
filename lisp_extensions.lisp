@@ -114,7 +114,7 @@
 
 ; saner defaults
 (defun parse-int (s)
-  (values (parse-integer s :junk-allowed t)))
+  (parse-integer s :junk-allowed t))
 
 ;**********************
 ; CONDITIONALS
