@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Multivac-client by jhickner</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Multivac-client</h1>
+        <p>A terminal client for the Multivac note-taking app</p>
+        <p class="view"><a href="https://github.com/jhickner/Multivac-Client">View the Project on GitHub <small>jhickner/Multivac-Client</small></a></p>
+        <ul>
+          <li><a href="https://github.com/jhickner/Multivac-Client/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jhickner/Multivac-Client/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jhickner/Multivac-Client">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>multivac client</h1>
+
+<p>This is the terminal client for accessing the multivac server. Multivac
+is a simple app for storing tagged snippets of information.</p>
+
+<p>This is probably the 10th version of this note-taking app. I rewrite it
+probably once a year. This time the server is written in Clojure, and
+the command-line client is written in Common Lisp since the JVM startup
+time made the Clojure version a little too slow.</p>
+
+<p>The name comes from a short story by Isaac Asimov about a computer that
+eventually collects enough information to recreate the universe:
+<a href="http://www.multivax.com/last_question.html">http://www.multivax.com/last_question.html</a></p>
+
+<h2>Usage</h2>
+
+<p>(I usually alias multivac to just "m" and multivac add to just "ma")</p>
+
+<div class="highlight">
+<pre>~ ➔ m
+Usage: multivac
+                <span class="o">[</span>&lt;tag&gt; &lt;tag&gt; &lt;tag&gt;...<span class="o">]</span> - search by tag
+                <span class="o">[</span>add &lt;tag,tag...&gt; &lt;body&gt; <span class="o">[</span>-l link<span class="o">]]</span> - add a new item
+                <span class="o">[</span>tags<span class="o">]</span> - list your top 20 tags
+                <span class="o">[</span>dump<span class="o">]</span> - dump a json stream of all items to stdout
+                <span class="o">[</span>-d &lt;item-id&gt;<span class="o">]</span> - delete an item
+</pre>
+</div>
+
+
+<h2>License</h2>
+
+<p>Copyright (C) 2012 Jason Hickner</p>
+
+<p>Distributed under the Eclipse Public License, the same as Clojure.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/jhickner">jhickner</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
