@@ -11,6 +11,8 @@
            *api-key* nil)
 
 (defvars c-on   (format nil "~C[36m" #\Esc) 
+         c2-on  (format nil "~C[33m" #\Esc)
+         c3-on  (format nil "~C[32;1m" #\Esc)
          c-on-b (format nil "~C[36;1m" #\Esc) 
          c-off  (format nil "~C[0m" #\Esc))
 
@@ -40,16 +42,20 @@
 
 (defun output-item (item)
   (progn
-    (format t "~a[ ~{~a~^, ~} ]-[ ~a ]-[ ~a ]~a~%" 
+    (format t "~a~a~a ~a~a~a ~a(~{~a~^, ~})~a~%" 
+            c-on
+            (fix-date (aget :$date (aget :ts item)))
+            c-off
+            c3-on
+            (aget :$oid (aget :--id item))
+            c-off
             c-on
             (aget :tags item)
-            (aget :$oid (aget :--id item))
-            (fix-date (aget :$date (aget :ts item)))
             c-off)
     (when-let body (aget :body item)
               (format t "~a~%" body))
     (when-let link (aget :link item)
-              (format t "~alink:~a ~a~%" c-on c-off link))
+              (format t "link:~a~%" link))
     (format t "~%")))
 
 (defun output-tag-count (items)
