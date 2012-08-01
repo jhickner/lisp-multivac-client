@@ -55,7 +55,7 @@
     (when-let body (aget :body item)
               (format t "~a~%" body))
     (when-let link (aget :link item)
-              (format t "link:~a~%" link))
+              (format t "link: ~a~%" link))
     (format t "~%")))
 
 (defun output-tag-count (items)
